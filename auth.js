@@ -24,7 +24,7 @@ window.cadastro = async function () {
   if (error) {
     alert('Erro no cadastro: ' + error.message)
   } else {
-    alert('Cadastro realizado! Faça login.')
+    alert('Cadastro realizado! Confirme o seu E-mail.')
   }
 }
 
