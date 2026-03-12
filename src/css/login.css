@@ -26,6 +26,7 @@
 
 body {
     font-family: var(--fonte);
+    color: var(--color-texto);
     background: #001F54;
     background: radial-gradient(circle, rgba(0, 31, 84, 1) 0%, rgba(3, 64, 120, 1) 40%, rgba(18, 130, 162, 1) 90%);
     display: flex;
