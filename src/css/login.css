@@ -38,7 +38,7 @@ body {
 }
 
 .container {
-    background: var(--cor-primaria-3);
+    background: var(--cor-branco);
     padding: clamp(2rem, 5vm, 3rem);
     border-radius: var(--raio);
     box-shadow: 0 8px 24px var(--cor-sombra);
