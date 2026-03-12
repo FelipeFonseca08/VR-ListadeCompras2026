@@ -47,3 +47,29 @@ body {
     text-align: center;
     color: var(--cor-preto);
 }
+
+.titulo {
+    font-size: clamp(1.5rem, 2vw + 1rem, 2rem);
+    color: var(--cor-texto);
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+input {
+    width: 100%;
+    padding: 14px;
+    margin: 1px solid var(--cor-preto);
+    border-radius: var(--raio);
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+input.focus {
+    border-color: var(--cor-primaria-3);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(18, 131, 162, 0.30);
+}
+
+#titulolog {
+    color: var(--cor-preto);
+}
