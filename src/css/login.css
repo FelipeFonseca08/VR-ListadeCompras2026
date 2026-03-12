@@ -94,6 +94,19 @@ button:hover {
     background-color: var(--cor-primaria-3);
 }
 
+@media (max-width:360px){
+    .container {
+        padding: 1.5rem;
+    }
+
+    input, button {
+        font-size: 0.95rem;
+    }
+} 
+    
+
+
+
 #titulolog {
     color: var(--cor-preto);
 }
