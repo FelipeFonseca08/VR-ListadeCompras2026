@@ -58,7 +58,8 @@ body {
 input {
     width: 100%;
     padding: 14px;
-    margin: 1px solid var(--cor-preto);
+    margin: 10px 0;
+    border: 1px solid var(--cor-preto);
     border-radius: var(--raio);
     font-size: 1rem;
     transition: var(--transition);
