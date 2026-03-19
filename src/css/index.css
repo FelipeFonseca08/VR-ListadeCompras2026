@@ -8,8 +8,9 @@
     --cor-bg: #0A1128;
 
     --cor-preto: #1d1d1d;
-    --cor-sombra: rgba(255, 255, 255, 0.411);
-    --color-texto: #FEFCFB;
+    --cor-sombra: rgba(0, 0, 0, 0.15);
+    --cor-texto: #FEFCFB;
+    --cor-branco:#FEFCFB;
 
     --fonte: "Playpen Sans Arabic", cursive;
 
@@ -26,7 +27,7 @@
 
 body {
     font-family: var(--fonte);
-    color: var(--color-texto);
+    color: var(--cor-branco);
     background: #001F54;
     background: radial-gradient(circle, rgba(0, 31, 84, 1) 0%, rgba(3, 64, 120, 1) 40%, rgba(18, 130, 162, 1) 90%);
     display: flex;
@@ -34,4 +35,29 @@ body {
     align-items: center;
     min-height: 100vh;
     padding: 20px;
+}
+
+.container {
+    background: var(--cor-branco);
+    padding: clamp(2rem, 5vh, 3rem);
+    border-radius: var(--raio);
+    box-shadow: 0 8px 24px var(--cor-sombra);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    color: var(--cor-preto);
+}
+
+#logo {
+    width: 200px;
+    height: auto;
+    margin-bottom: 20px;
+    border-radius: var(--raio);
+}
+
+.titulo {
+    font-size: clamp(1.5rem, 2vw + 1rem, 2rem);
+    color: var(--cor-texto);
+    margin-bottom: 1.5rem;
+    font-weight: 500;
 }
