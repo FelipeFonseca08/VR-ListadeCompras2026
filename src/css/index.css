@@ -43,13 +43,13 @@ body {
     border-radius: var(--raio);
     box-shadow: 0 8px 24px var(--cor-sombra);
     width: 100%;
-    max-width: 500px;
+    max-width: 550px;
     text-align: center;
     color: var(--cor-preto);
 }
 
 #logo {
-    width: 200px;
+    width: 250px;
     height: auto;
     margin-bottom: 20px;
     border-radius: var(--raio);
