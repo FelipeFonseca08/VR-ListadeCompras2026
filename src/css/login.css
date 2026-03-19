@@ -48,6 +48,13 @@ body {
     color: var(--cor-preto);
 }
 
+#logo {
+    width: 150px;
+    height: auto;
+    margin-bottom: 20px;
+    border-radius: var(--raio);
+}
+
 .titulo {
     font-size: clamp(1.5rem, 2vw + 1rem, 2rem);
     color: var(--cor-texto);
