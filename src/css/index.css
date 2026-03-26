@@ -100,13 +100,13 @@ button[onclick="logout()"]:hover {
 }
 
 #lista button {
-    background-color: var(--cor-primaria-3);
+    background-color: var(--cor-branco);
     color: var(--cor-preto);
     border: none;
     border-radius: var(--raio);
     padding: 6px 12px;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 2rem;
     transition: var(--transition);
 }
 
