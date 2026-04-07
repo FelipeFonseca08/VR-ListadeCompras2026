@@ -100,6 +100,10 @@ button[onclick="logout()"]:hover {
     margin-bottom: 1rem;
 }
 
+#lista li:hover {
+    box-shadow: 3px 3px 0 var(--cor-preto);
+}
+
 #lista button {
     background-color: var(--cor-branco);
     color: var(--cor-preto);
