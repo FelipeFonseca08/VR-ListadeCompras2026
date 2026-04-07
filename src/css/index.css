@@ -112,7 +112,7 @@ button[onclick="logout()"]:hover {
 }
 
 #lista button:hover {
-    box-shadow: 4px 4px 0 var(--cor-primaria-3);
+    box-shadow: 2px 2px 0 var(--cor-preto);
 }
 
 #item {
