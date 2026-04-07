@@ -111,6 +111,10 @@ button[onclick="logout()"]:hover {
     transition: var(--transition);
 }
 
+#lista button:hover {
+    box-shadow: 4px 4px 0 var(--cor-primaria-3);
+}
+
 #item {
     width: 100%;
     max-width: 400px;
