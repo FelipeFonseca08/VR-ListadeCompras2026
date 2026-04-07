@@ -63,14 +63,13 @@ body {
 }
 
 button[onclick="logout()"] {
-    align-self: flex-end;
-    margin-bottom: 1.5rem;
+    padding: 12px 20px;
     background-color: var(--cor-primaria-2);
     color: var(--cor-branco);
-    padding: 10px 16px;
     border: none;
     border-radius: var(--raio);
     cursor: pointer;
+    font-size: 1rem;
     font-weight: 500;
     transition: var(--transition);
 }
