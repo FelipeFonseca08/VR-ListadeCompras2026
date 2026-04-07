@@ -102,6 +102,7 @@ button[onclick="logout()"]:hover {
 
 #lista li:hover {
     background-color: var(--cor-primaria-2);
+    transition: var(--transition);
 }
 
 #lista button {
@@ -117,6 +118,7 @@ button[onclick="logout()"]:hover {
 
 #lista button:hover {
     background-color:#cacaca;
+    transition: var(--transition);
 }
 
 #item {
