@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cesta Livre</title>
-
-    <link rel="stylesheet" href="login.css">
+    <title>Login Cesta Livre</title>
+    <link rel="stylesheet" href="src/css/login.css">
     <link rel="manifest" href="manifest.json">
     <link rel="shortcut icon" href="src/icons/favicon.ico" type="image/x-icon">
 </head>
@@ -13,36 +13,34 @@
 <body>
 
     <div class="container">
+        <img id="logo" src="src/icons/icon-512x512.png" alt="Logo">
+        <h2 class="titulo" id="titulolog">Login</h2>
+        <input type="email" id="email" placeholder="Digite seu E-mail">
+        <input type="password" id="senha" placeholder="Digite sua Senha">
 
-        <img class="logo" src="src/icons/icon-512x512.png" alt="Logo">
-
-        <h1>Entrar</h1>
-        <p class="subtitle">Acesse sua lista compartilhada</p>
-
-        <!-- LOGIN COM GOOGLE -->
-        <button class="btn-google" onclick="loginGoogle()">
-            Continuar com Google
-        </button>
-
-        <div class="divider">ou</div>
-
-        <!-- LOGIN NORMAL -->
-        <input type="email" id="email" placeholder="E-mail">
-        <input type="password" id="senha" placeholder="Senha">
-
-        <span id="erro" class="erro"></span>
-
-        <button id="btn-login" class="btn-primary" onclick="login()">
-            Entrar
-        </button>
-
-        <button class="btn-secondary" onclick="cadastro()">
-            Criar conta
-        </button>
-
+        <div class="botoes">
+            <button onclick="login()">Entrar</button>
+            <button onclick="cadastro()">Cadastrar</button>
+        </div>
     </div>
 
     <script type="module" src="auth.js"></script>
 
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registrado com sucesso:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Falha ao registrar o ServiceWorker:', error);
+                    });
+            });
+        }
+    </script>
+
 </body>
+
 </html>
