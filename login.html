@@ -1,46 +1,135 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Cesta Livre</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Login • Cesta Livre</title>
+    
     <link rel="stylesheet" href="src/css/login.css">
     <link rel="manifest" href="manifest.json">
-    <link rel="shortcut icon" href="src/icons/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="src/icons/favicon.ico">
+    
+    <!-- Ícones Feather -->
+    <script src="https://unpkg.com/feather-icons"></script>
 </head>
 
 <body>
+    <div class="login-wrapper">
+        <div class="login-card" id="loginCard">
+            
+            <!-- Header com Logo e Título -->
+            <div class="login-header">
+                <div class="logo-wrapper">
+                    <img id="logo" src="src/icons/icon-512x512.png" alt="Cesta Livre">
+                </div>
+                <h1 class="app-title">Cesta Livre</h1>
+                <p class="app-subtitle">Sua lista de compras compartilhada</p>
+            </div>
 
-    <div class="container">
-        <img id="logo" src="src/icons/icon-512x512.png" alt="Logo">
-        <h2 class="titulo" id="titulolog">Login</h2>
-        <input type="email" id="email" placeholder="Digite seu E-mail">
-        <input type="password" id="senha" placeholder="Digite sua Senha">
+            <!-- Formulário -->
+            <form class="login-form" id="loginForm" onsubmit="return false;">
+                
+                <div class="form-group">
+                    <div class="input-wrapper">
+                        <i data-feather="mail" class="input-icon"></i>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            class="form-input" 
+                            placeholder=" " 
+                            autocomplete="email"
+                            required
+                        >
+                        <label for="email" class="form-label">E-mail</label>
+                    </div>
+                </div>
 
-        <div class="botoes">
-            <button onclick="login()">Entrar</button>
-            <button onclick="cadastro()">Cadastrar</button>
+                <div class="form-group">
+                    <div class="input-wrapper">
+                        <i data-feather="lock" class="input-icon"></i>
+                        <input 
+                            type="password" 
+                            id="senha" 
+                            class="form-input" 
+                            placeholder=" " 
+                            autocomplete="current-password"
+                            required
+                        >
+                        <label for="senha" class="form-label">Senha</label>
+                    </div>
+                </div>
+
+                <!-- Link Esqueci minha senha -->
+                <div class="forgot-password">
+                    <a href="#" class="forgot-link" onclick="esqueciSenha(); return false;">Esqueci minha senha?</a>
+                </div>
+
+                <!-- Botão de Login -->
+                <button id="btn-login" class="btn-login" onclick="login()">
+                    <span class="btn-content">
+                        <i data-feather="log-in" class="btn-icon"></i>
+                        <span class="btn-text">Entrar</span>
+                    </span>
+                    <span class="btn-loader"></span>
+                </button>
+
+                <!-- Mensagem de Erro/Sucesso -->
+                <div id="mensagem" class="message-container"></div>
+
+                <!-- Divisor -->
+                <div class="divider-wrapper">
+                    <span class="divider-line"></span>
+                    <span class="divider-text">ou</span>
+                    <span class="divider-line"></span>
+                </div>
+
+                <!-- Botão Criar Conta -->
+                <button type="button" class="btn-signup" onclick="cadastro()">
+                    <span class="btn-content">
+                        <i data-feather="user-plus" class="btn-icon"></i>
+                        <span class="btn-text">Criar conta gratuita</span>
+                    </span>
+                    <span class="btn-loader"></span>
+                </button>
+
+            </form>
+
+            <!-- Footer -->
+            <div class="login-footer">
+                <p class="footer-text">
+                    <i data-feather="users" class="footer-icon"></i>
+                    Compartilhe sua lista com a família
+                </p>
+            </div>
+        </div>
+        
+        <!-- Background decorativo -->
+        <div class="background-decoration">
+            <div class="circle circle-1"></div>
+            <div class="circle circle-2"></div>
+            <div class="circle circle-3"></div>
         </div>
     </div>
 
     <script type="module" src="auth.js"></script>
-
-
     <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registrado com sucesso:', registration.scope);
-                    })
-                    .catch(error => {
-                        console.log('Falha ao registrar o ServiceWorker:', error);
-                    });
-            });
+        // Inicializa os ícones Feather
+        feather.replace();
+        
+        // Função placeholder para "Esqueci minha senha"
+        window.esqueciSenha = function() {
+            const msgEl = document.getElementById('mensagem');
+            msgEl.innerHTML = `
+                <div class="message info">
+                    <i data-feather="info"></i>
+                    <span>Em breve! Use a recuperação de senha do app.</span>
+                </div>
+            `;
+            feather.replace();
+            setTimeout(() => {
+                msgEl.innerHTML = '';
+            }, 4000);
         }
     </script>
-
 </body>
-
 </html>
