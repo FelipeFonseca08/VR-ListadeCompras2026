@@ -1,40 +1,66 @@
 import { supabase } from './supabaseClient.js'
 
-// Função para login do usuário
+// LOGIN NORMAL
 window.login = async function () {
+  const btn = document.getElementById('btn-login')
+  const erro = document.getElementById('erro')
+
+  erro.textContent = ''
+  btn.innerText = 'Entrando...'
+  btn.disabled = true
+
   const email = document.getElementById('email').value
   const senha = document.getElementById('senha').value
 
-  // Autentica com Supabase
-  const { error } = await supabase.auth.signInWithPassword({ email, password: senha })
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password: senha
+  })
+
   if (error) {
-    alert('Erro no login: ' + error.message)
+    erro.textContent = error.message
+    btn.innerText = 'Entrar'
+    btn.disabled = false
   } else {
-    // Redireciona para página principal
     window.location.href = 'index.html'
   }
 }
 
-// Função para cadastrar novo usuário
+// LOGIN COM GOOGLE
+window.loginGoogle = async function () {
+  await supabase.auth.signInWithOAuth({
+    provider: 'google'
+  })
+}
+
+// CADASTRO
 window.cadastro = async function () {
+  const erro = document.getElementById('erro')
+  erro.textContent = ''
+
   const email = document.getElementById('email').value
   const senha = document.getElementById('senha').value
 
-  const { error } = await supabase.auth.signUp({ email, password: senha })
+  const { error } = await supabase.auth.signUp({
+    email,
+    password: senha
+  })
+
   if (error) {
-    alert('Erro no cadastro: ' + error.message)
+    erro.textContent = error.message
   } else {
-    alert('Cadastro realizado! Confirme o seu E-mail.')
+    erro.textContent = 'Cadastro feito. Verifique seu e-mail.'
   }
 }
 
+// ENTER PARA LOGIN
 document.addEventListener('keydown', function (event) {
   if (event.key === 'Enter') {
-    const caminho = window.location.pathname
-    if (caminho.includes('login')) {
-      login()
-    } else if (caminho.includes('cadastro')) {
-      cadastro()
-    }
+    login()
   }
 })
+
+// FOCO AUTOMÁTICO
+window.onload = () => {
+  document.getElementById('email').focus()
+}
