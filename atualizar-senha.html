@@ -9,7 +9,6 @@
     <link rel="manifest" href="manifest.json">
     <link rel="shortcut icon" href="src/icons/favicon.ico">
     
-    <!-- Ícones Feather -->
     <script src="https://unpkg.com/feather-icons"></script>
 </head>
 
@@ -17,7 +16,6 @@
     <div class="login-wrapper">
         <div class="login-card" id="resetCard">
             
-            <!-- Header com Logo e Título -->
             <div class="login-header">
                 <div class="logo-wrapper">
                     <img id="logo" src="src/icons/icon-512x512.png" alt="Cesta Livre">
@@ -26,7 +24,6 @@
                 <p class="app-subtitle">Crie uma nova senha para sua conta</p>
             </div>
 
-            <!-- Formulário de Redefinição -->
             <form class="login-form" id="resetForm" onsubmit="return false;">
                 
                 <div class="form-group">
@@ -59,7 +56,6 @@
                     </div>
                 </div>
 
-                <!-- Requisitos da senha -->
                 <div class="password-requirements" id="passwordRequirements">
                     <p class="requirements-title">Sua senha deve ter:</p>
                     <ul class="requirements-list">
@@ -74,7 +70,6 @@
                     </ul>
                 </div>
 
-                <!-- Botão de Redefinir -->
                 <button id="btn-reset" class="btn-login" type="button">
                     <span class="btn-content">
                         <i data-feather="save" class="btn-icon"></i>
@@ -83,17 +78,14 @@
                     <span class="btn-loader"></span>
                 </button>
 
-                <!-- Mensagem de Erro/Sucesso -->
                 <div id="mensagem" class="message-container"></div>
 
-                <!-- Divisor -->
                 <div class="divider-wrapper">
                     <span class="divider-line"></span>
                     <span class="divider-text">ou</span>
                     <span class="divider-line"></span>
                 </div>
 
-                <!-- Botão Voltar ao Login -->
                 <button type="button" class="btn-signup" id="btnVoltar">
                     <span class="btn-content">
                         <i data-feather="arrow-left" class="btn-icon"></i>
@@ -104,7 +96,6 @@
             </form>
         </div>
         
-        <!-- Background decorativo -->
         <div class="background-decoration">
             <div class="circle circle-1"></div>
             <div class="circle circle-2"></div>
@@ -114,51 +105,50 @@
 
     <script type="module" src="reset-senha.js"></script>
     <script>
-        // Inicializa os ícones Feather
         feather.replace();
         
-        // Aguarda o DOM carregar para adicionar os event listeners
         document.addEventListener('DOMContentLoaded', function() {
-            // Botão de redefinir senha
             document.getElementById('btn-reset').addEventListener('click', function(e) {
                 e.preventDefault();
-                if (typeof window.atualizarSenha === 'function') {
-                    window.atualizarSenha();
-                }
+                if (typeof window.atualizarSenha === 'function') window.atualizarSenha();
             });
             
-            // Botão voltar ao login
             document.getElementById('btnVoltar').addEventListener('click', function(e) {
                 e.preventDefault();
                 window.location.href = 'login.html';
             });
             
-            // Validação em tempo real dos requisitos
-            const novaSenha = document.getElementById('novaSenha');
-            const confirmarSenha = document.getElementById('confirmarSenha');
+            var novaSenha = document.getElementById('novaSenha');
+            var confirmarSenha = document.getElementById('confirmarSenha');
             
             novaSenha.addEventListener('input', function() {
-                if (typeof window.validarRequisitos === 'function') {
-                    window.validarRequisitos();
-                }
+                if (typeof window.validarRequisitos === 'function') window.validarRequisitos();
             });
             
             confirmarSenha.addEventListener('input', function() {
-                if (typeof window.validarRequisitos === 'function') {
-                    window.validarRequisitos();
-                }
+                if (typeof window.validarRequisitos === 'function') window.validarRequisitos();
             });
             
-            // Enter para submeter
             document.addEventListener('keydown', function(event) {
                 if (event.key === 'Enter') {
                     event.preventDefault();
-                    if (typeof window.atualizarSenha === 'function') {
-                        window.atualizarSenha();
-                    }
+                    if (typeof window.atualizarSenha === 'function') window.atualizarSenha();
                 }
             });
         });
+
+        // Registra o Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(function(registration) {
+                        console.log('ServiceWorker registrado:', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.error('ServiceWorker erro:', error);
+                    });
+            });
+        }
     </script>
 </body>
 </html>

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +11,7 @@
 
 <body>
     <div class="container">
+        <img id="logo" src="src/icons/icon-512x512.png" alt="Cesta Livre">
         <h1 class="titulo">Sua Lista de Compras</h1>
         <ul id="lista"></ul>
         <input type="text" id="item" placeholder="Novo item">
@@ -21,21 +21,28 @@
 
     <script type="module" src="app.js"></script>
 
-
     <script>
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
+            window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/service-worker.js')
-                    .then(registration => {
+                    .then(function(registration) {
                         console.log('ServiceWorker registrado com sucesso:', registration.scope);
+                        
+                        // Verifica se há atualização disponível
+                        registration.addEventListener('updatefound', function() {
+                            var newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', function() {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    console.log('Nova versão disponível! Recarregue a página.');
+                                }
+                            });
+                        });
                     })
-                    .catch(error => {
-                        console.log('Falha ao registrar o ServiceWorker:', error);
+                    .catch(function(error) {
+                        console.error('Falha ao registrar o ServiceWorker:', error);
                     });
             });
         }
     </script>
-
 </body>
-
 </html>
