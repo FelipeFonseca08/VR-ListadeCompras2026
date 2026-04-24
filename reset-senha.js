@@ -45,12 +45,13 @@ window.validarRequisitos = function() {
 }
 
 // ============================================
-// TRADUZIR MENSAGENS DE ERRO
+// TRADUZIR TODOS OS ERROS DO SUPABASE
 // ============================================
 
 function traduzirErro(mensagem) {
     var msg = mensagem.toLowerCase()
     
+    // Senha igual à anterior
     if (msg.includes('new password') && msg.includes('different') && msg.includes('old password')) {
         return 'A nova senha deve ser diferente da senha atual.'
     }
@@ -60,19 +61,118 @@ function traduzirErro(mensagem) {
     if (msg.includes('password') && msg.includes('different')) {
         return 'A nova senha deve ser diferente da senha atual.'
     }
+    if (msg.includes('password') && msg.includes('same')) {
+        return 'A nova senha deve ser diferente da senha atual.'
+    }
+    
+    // Senha muito curta
     if (msg.includes('password') && msg.includes('at least 6 characters')) {
         return 'A senha deve ter pelo menos 6 caracteres.'
     }
+    if (msg.includes('password') && msg.includes('minimum')) {
+        return 'A senha deve ter pelo menos 6 caracteres.'
+    }
+    if (msg.includes('password') && msg.includes('too short')) {
+        return 'A senha é muito curta. Use pelo menos 6 caracteres.'
+    }
+    
+    // Senha muito comum/fácil
     if (msg.includes('password') && msg.includes('common')) {
         return 'Essa senha é muito comum. Escolha uma senha mais segura.'
     }
+    if (msg.includes('password') && msg.includes('weak')) {
+        return 'Essa senha é muito fraca. Escolha uma senha mais segura.'
+    }
+    if (msg.includes('password') && msg.includes('easy')) {
+        return 'Essa senha é muito fácil. Escolha uma senha mais segura.'
+    }
+    
+    // Token expirado
     if (msg.includes('token') && msg.includes('expired')) {
         return 'Link expirado. Solicite uma nova recuperação de senha.'
     }
+    if (msg.includes('token') && msg.includes('invalid')) {
+        return 'Link inválido. Solicite uma nova recuperação de senha.'
+    }
+    
+    // Usuário não encontrado
     if (msg.includes('user') && msg.includes('not found')) {
         return 'Usuário não encontrado.'
     }
     
+    // Email já cadastrado
+    if (msg.includes('already') && msg.includes('registered')) {
+        return 'Este e-mail já está cadastrado.'
+    }
+    if (msg.includes('already') && msg.includes('exists')) {
+        return 'Este e-mail já está cadastrado.'
+    }
+    if (msg.includes('duplicate')) {
+        return 'Este e-mail já está cadastrado.'
+    }
+    
+    // Email não confirmado
+    if (msg.includes('email') && msg.includes('not confirmed')) {
+        return 'E-mail não confirmado. Verifique sua caixa de entrada.'
+    }
+    if (msg.includes('email') && msg.includes('not verified')) {
+        return 'E-mail não verificado. Verifique sua caixa de entrada.'
+    }
+    
+    // Login inválido
+    if (msg.includes('invalid login credentials')) {
+        return 'E-mail ou senha incorretos.'
+    }
+    if (msg.includes('invalid credentials')) {
+        return 'E-mail ou senha incorretos.'
+    }
+    if (msg.includes('wrong password')) {
+        return 'Senha incorreta.'
+    }
+    if (msg.includes('wrong email')) {
+        return 'E-mail não encontrado.'
+    }
+    
+    // Rate limit (muitas tentativas)
+    if (msg.includes('rate limit') || msg.includes('too many requests')) {
+        return 'Muitas tentativas. Aguarde um momento e tente novamente.'
+    }
+    if (msg.includes('try again later')) {
+        return 'Muitas tentativas. Aguarde um momento e tente novamente.'
+    }
+    
+    // Sessão expirada
+    if (msg.includes('session') && msg.includes('expired')) {
+        return 'Sessão expirada. Faça login novamente.'
+    }
+    if (msg.includes('session') && msg.includes('not found')) {
+        return 'Sessão não encontrada. Faça login novamente.'
+    }
+    
+    // Rede/Internet
+    if (msg.includes('network') || msg.includes('fetch failed')) {
+        return 'Erro de conexão. Verifique sua internet e tente novamente.'
+    }
+    if (msg.includes('timeout') || msg.includes('timed out')) {
+        return 'Tempo de conexão esgotado. Tente novamente.'
+    }
+    if (msg.includes('offline') || msg.includes('disconnected')) {
+        return 'Você está offline. Verifique sua conexão com a internet.'
+    }
+    
+    // Servidor
+    if (msg.includes('server') && msg.includes('error')) {
+        return 'Erro no servidor. Tente novamente mais tarde.'
+    }
+    if (msg.includes('internal') && msg.includes('error')) {
+        return 'Erro interno. Tente novamente mais tarde.'
+    }
+    if (msg.includes('service') && msg.includes('unavailable')) {
+        return 'Serviço indisponível. Tente novamente mais tarde.'
+    }
+    
+    // Se não encontrou tradução, retorna a mensagem original
+    console.log('Mensagem não traduzida:', mensagem)
     return mensagem
 }
 
@@ -139,7 +239,9 @@ window.atualizarSenha = async function() {
         const { error } = await supabase.auth.updateUser({ password: senha })
         
         if (error) {
+            console.log('Erro original:', error.message)
             var mensagemErro = traduzirErro(error.message)
+            console.log('Erro traduzido:', mensagemErro)
             
             mensagemEl.innerHTML = '<div class="message error"><i data-feather="alert-triangle"></i><span>' + mensagemErro + '</span></div>'
             if (typeof feather !== 'undefined') feather.replace()
@@ -177,7 +279,10 @@ window.atualizarSenha = async function() {
             }, 2000)
         }
     } catch (err) {
-        mensagemEl.innerHTML = '<div class="message error"><i data-feather="alert-triangle"></i><span>Erro ao atualizar. Tente novamente.</span></div>'
+        console.log('Erro inesperado:', err)
+        var mensagemErro = traduzirErro(err.message || 'Erro desconhecido')
+        
+        mensagemEl.innerHTML = '<div class="message error"><i data-feather="alert-triangle"></i><span>' + mensagemErro + '</span></div>'
         if (typeof feather !== 'undefined') feather.replace()
         botao.classList.remove('loading')
         botao.disabled = false
@@ -196,7 +301,8 @@ function init() {
         if (error || !user) {
             var mensagemEl = document.getElementById('mensagem')
             if (mensagemEl) {
-                mensagemEl.innerHTML = '<div class="message error"><i data-feather="alert-triangle"></i><span>Link expirado ou inválido.<br>Solicite uma nova recuperação de senha.</span></div>'
+                var mensagemErro = error ? traduzirErro(error.message) : 'Link expirado ou inválido.'
+                mensagemEl.innerHTML = '<div class="message error"><i data-feather="alert-triangle"></i><span>' + mensagemErro + '<br>Solicite uma nova recuperação de senha.</span></div>'
                 if (typeof feather !== 'undefined') feather.replace()
             }
             

@@ -1,6 +1,131 @@
 import { supabase } from './supabaseClient.js'
 
 // ============================================
+// TRADUZIR TODOS OS ERROS DO SUPABASE
+// ============================================
+
+function traduzirErro(mensagem) {
+    var msg = mensagem.toLowerCase()
+    
+    // Senha igual à anterior
+    if (msg.includes('new password') && msg.includes('different')) {
+        return 'A nova senha deve ser diferente da senha atual.'
+    }
+    if (msg.includes('password') && msg.includes('same')) {
+        return 'A nova senha deve ser diferente da senha atual.'
+    }
+    
+    // Senha muito curta
+    if (msg.includes('password') && msg.includes('at least 6')) {
+        return 'A senha deve ter pelo menos 6 caracteres.'
+    }
+    if (msg.includes('password') && msg.includes('too short')) {
+        return 'A senha é muito curta. Use pelo menos 6 caracteres.'
+    }
+    
+    // Senha muito comum
+    if (msg.includes('password') && msg.includes('common')) {
+        return 'Essa senha é muito comum. Escolha uma mais segura.'
+    }
+    if (msg.includes('password') && msg.includes('weak')) {
+        return 'Essa senha é muito fraca. Escolha uma mais segura.'
+    }
+    
+    // Login
+    if (msg.includes('invalid login credentials')) {
+        return 'E-mail ou senha incorretos.'
+    }
+    if (msg.includes('invalid credentials')) {
+        return 'E-mail ou senha incorretos.'
+    }
+    if (msg.includes('wrong password')) {
+        return 'Senha incorreta.'
+    }
+    if (msg.includes('wrong email')) {
+        return 'E-mail não encontrado.'
+    }
+    
+    // Email já cadastrado
+    if (msg.includes('already') && msg.includes('registered')) {
+        return 'Este e-mail já está cadastrado.'
+    }
+    if (msg.includes('already') && msg.includes('exists')) {
+        return 'Este e-mail já está cadastrado.'
+    }
+    if (msg.includes('duplicate')) {
+        return 'Este e-mail já está cadastrado.'
+    }
+    
+    // Email não confirmado
+    if (msg.includes('email') && msg.includes('not confirmed')) {
+        return 'E-mail não confirmado. Verifique sua caixa de entrada.'
+    }
+    if (msg.includes('email') && msg.includes('not verified')) {
+        return 'E-mail não verificado. Verifique sua caixa de entrada.'
+    }
+    
+    // Token
+    if (msg.includes('token') && msg.includes('expired')) {
+        return 'Link expirado. Solicite uma nova recuperação.'
+    }
+    if (msg.includes('token') && msg.includes('invalid')) {
+        return 'Link inválido. Solicite uma nova recuperação.'
+    }
+    
+    // Rate limit
+    if (msg.includes('rate limit') || msg.includes('too many requests')) {
+        return 'Muitas tentativas. Aguarde um momento.'
+    }
+    
+    // Sessão
+    if (msg.includes('session') && msg.includes('expired')) {
+        return 'Sessão expirada. Faça login novamente.'
+    }
+    
+    // Rede
+    if (msg.includes('network') || msg.includes('fetch failed')) {
+        return 'Erro de conexão. Verifique sua internet.'
+    }
+    if (msg.includes('timeout') || msg.includes('timed out')) {
+        return 'Tempo esgotado. Tente novamente.'
+    }
+    if (msg.includes('offline') || msg.includes('disconnected')) {
+        return 'Você está offline. Verifique sua conexão.'
+    }
+    
+    // Servidor
+    if (msg.includes('server') && msg.includes('error')) {
+        return 'Erro no servidor. Tente novamente mais tarde.'
+    }
+    if (msg.includes('internal') && msg.includes('error')) {
+        return 'Erro interno. Tente novamente mais tarde.'
+    }
+    if (msg.includes('service') && msg.includes('unavailable')) {
+        return 'Serviço indisponível. Tente novamente mais tarde.'
+    }
+    
+    // Recuperação de senha
+    if (msg.includes('reset') && msg.includes('email')) {
+        return 'Erro ao enviar e-mail de recuperação.'
+    }
+    if (msg.includes('email') && msg.includes('send')) {
+        return 'Erro ao enviar e-mail. Tente novamente.'
+    }
+    
+    // Email inválido
+    if (msg.includes('email') && msg.includes('invalid')) {
+        return 'E-mail inválido. Verifique o endereço.'
+    }
+    if (msg.includes('valid email')) {
+        return 'Insira um e-mail válido.'
+    }
+    
+    // Se não encontrou tradução
+    console.log('Mensagem não traduzida:', mensagem)
+    return mensagem
+}
+
+// ============================================
 // LOGIN
 // ============================================
 
@@ -45,12 +170,7 @@ window.login = async function () {
   })
 
   if (error) {
-    var errorMessage = "Erro ao fazer login"
-    if (error.message.includes("Invalid login credentials")) {
-      errorMessage = "E-mail ou senha incorretos"
-    } else {
-      errorMessage = error.message
-    }
+    var errorMessage = traduzirErro(error.message)
     
     mensagemEl.innerHTML = '<div class="message error"><i data-feather="alert-triangle"></i><span>' + errorMessage + '</span></div>'
     if (typeof feather !== 'undefined') feather.replace()
@@ -137,7 +257,8 @@ window.cadastro = async function () {
   botao.disabled = false
 
   if (error) {
-    mensagemEl.innerHTML = '<div class="message error"><i data-feather="alert-triangle"></i><span>' + error.message + '</span></div>'
+    var errorMessage = traduzirErro(error.message)
+    mensagemEl.innerHTML = '<div class="message error"><i data-feather="alert-triangle"></i><span>' + errorMessage + '</span></div>'
     if (typeof feather !== 'undefined') feather.replace()
   } else {
     mensagemEl.innerHTML = '<div class="message success"><i data-feather="mail"></i><span>Cadastro realizado! Verifique seu e-mail.</span></div>'
@@ -231,7 +352,8 @@ window.enviarRecuperacao = async function() {
     })
     
     if (error) {
-      recoveryMensagem.innerHTML = '<div class="message error"><i data-feather="alert-triangle"></i><span>' + error.message + '</span></div>'
+      var errorMessage = traduzirErro(error.message)
+      recoveryMensagem.innerHTML = '<div class="message error"><i data-feather="alert-triangle"></i><span>' + errorMessage + '</span></div>'
       if (typeof feather !== 'undefined') feather.replace()
       botao.classList.remove('loading')
       botao.disabled = false
@@ -243,7 +365,8 @@ window.enviarRecuperacao = async function() {
       setTimeout(function() { window.fecharRecuperacao() }, 3000)
     }
   } catch (err) {
-    recoveryMensagem.innerHTML = '<div class="message error"><i data-feather="alert-triangle"></i><span>Erro ao enviar. Tente novamente.</span></div>'
+    var errorMessage = traduzirErro(err.message || 'Erro ao enviar')
+    recoveryMensagem.innerHTML = '<div class="message error"><i data-feather="alert-triangle"></i><span>' + errorMessage + '</span></div>'
     if (typeof feather !== 'undefined') feather.replace()
     botao.classList.remove('loading')
     botao.disabled = false

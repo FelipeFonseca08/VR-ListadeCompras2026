@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cesta-livre-v8';
+const CACHE_NAME = 'cesta-livre-v9';
 const urlsToCache = [
   '/',
   '/login.html',
