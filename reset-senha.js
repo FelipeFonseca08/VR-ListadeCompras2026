@@ -111,8 +111,27 @@ window.atualizarSenha = async function() {
         const { error } = await supabase.auth.updateUser({ password: senha })
         
         if (error) {
-            mensagemEl.innerHTML = '<div class="message error"><i data-feather="alert-triangle"></i><span>' + error.message + '</span></div>'
+            // TRADUÇÃO DAS MENSAGENS DE ERRO
+            var mensagemErro = error.message
+            
+            if (error.message.includes('New password should be different from the old password')) {
+                mensagemErro = 'A nova senha deve ser diferente da senha atual.'
+            } else if (error.message.includes('Password should be at least 6 characters')) {
+                mensagemErro = 'A senha deve ter pelo menos 6 caracteres.'
+            } else if (error.message.includes('Invalid login credentials')) {
+                mensagemErro = 'Credenciais inválidas.'
+            }
+            
+            mensagemEl.innerHTML = '<div class="message error"><i data-feather="alert-triangle"></i><span>' + mensagemErro + '</span></div>'
             if (typeof feather !== 'undefined') feather.replace()
+            
+            novaSenha.classList.add('input-error')
+            novaSenha.focus()
+            
+            setTimeout(function() {
+                novaSenha.classList.remove('input-error')
+            }, 2000)
+            
             botao.classList.remove('loading')
             botao.disabled = false
         } else {
@@ -129,7 +148,6 @@ window.atualizarSenha = async function() {
                 if (typeof feather !== 'undefined') feather.replace()
             }, 800)
             
-            // CORREÇÃO AQUI: Função normal em vez de async no setTimeout
             setTimeout(function() {
                 supabase.auth.signOut().then(function() {
                     window.location.href = 'login.html'
@@ -153,13 +171,11 @@ window.atualizarSenha = async function() {
 // ============================================
 
 function init() {
-    // Verifica se o usuário está autenticado (via token de recuperação)
     supabase.auth.getUser().then(function(result) {
         var user = result.data.user
         var error = result.error
         
         if (error || !user) {
-            // Link expirado ou inválido
             var mensagemEl = document.getElementById('mensagem')
             if (mensagemEl) {
                 mensagemEl.innerHTML = '<div class="message error"><i data-feather="alert-triangle"></i><span>Link expirado ou inválido.<br>Solicite uma nova recuperação de senha.</span></div>'
@@ -173,7 +189,6 @@ function init() {
                 botao.style.cursor = 'not-allowed'
             }
         } else {
-            // Usuário autenticado - foco no campo
             var novaSenha = document.getElementById('novaSenha')
             if (novaSenha) novaSenha.focus()
         }
@@ -182,5 +197,4 @@ function init() {
     })
 }
 
-// Executa ao carregar a página
 init()
