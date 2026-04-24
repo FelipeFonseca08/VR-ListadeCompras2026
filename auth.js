@@ -174,10 +174,6 @@ window.abrirRecuperacao = function() {
   }, 10)
 }
 
-// ============================================
-// RECUPERAÇÃO DE SENHA - FECHAR MODAL
-// ============================================
-
 window.fecharRecuperacao = function() {
   const modal = document.getElementById('modalOverlay')
   if (!modal) return
@@ -191,10 +187,6 @@ window.fecharRecuperacao = function() {
     if (recoveryEmail) recoveryEmail.classList.remove('input-error')
   }, 300)
 }
-
-// ============================================
-// RECUPERAÇÃO DE SENHA - ENVIAR EMAIL
-// ============================================
 
 window.enviarRecuperacao = async function() {
   const recoveryEmail = document.getElementById('recoveryEmail')
@@ -231,7 +223,6 @@ window.enviarRecuperacao = async function() {
   botao.disabled = true
   
   try {
-    // URL para onde o usuário será redirecionado ao clicar no link do e-mail
     var redirectUrl = window.location.origin + '/atualizar-senha.html'
     console.log('URL de redirecionamento:', redirectUrl)
     

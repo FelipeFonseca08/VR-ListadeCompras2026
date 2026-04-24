@@ -53,10 +53,9 @@
                             required
                         >
                         <label for="senha" class="form-label">Senha</label>
-                        <!-- BOTÃO OLHO -->
                         <button type="button" class="toggle-password" data-target="senha" aria-label="Mostrar senha">
-                            <i data-feather="eye-off" class="eye-icon eye-closed"></i>
-                            <i data-feather="eye" class="eye-icon eye-open" style="display: none;"></i>
+                            <i data-feather="eye-off" class="eye-icon eye-off"></i>
+                            <i data-feather="eye" class="eye-icon eye-on"></i>
                         </button>
                     </div>
                 </div>
@@ -157,25 +156,36 @@
         
         document.addEventListener('DOMContentLoaded', function() {
             // ============================================
-            // FUNÇÃO DO BOTÃO OLHO (MOSTRAR/OCULTAR SENHA)
+            // BOTÃO OLHO (MOSTRAR/OCULTAR SENHA) - CORRIGIDO
             // ============================================
             document.querySelectorAll('.toggle-password').forEach(function(button) {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
                     var targetId = this.getAttribute('data-target');
                     var input = document.getElementById(targetId);
                     
+                    if (!input) return;
+                    
                     if (input.type === 'password') {
                         input.type = 'text';
-                        this.classList.add('show');
+                        this.classList.add('showing');
+                        this.setAttribute('aria-label', 'Ocultar senha');
                     } else {
                         input.type = 'password';
-                        this.classList.remove('show');
+                        this.classList.remove('showing');
+                        this.setAttribute('aria-label', 'Mostrar senha');
                     }
+                });
+                
+                button.addEventListener('mousedown', function(e) {
+                    e.preventDefault();
                 });
             });
             
             // ============================================
-            // EVENT LISTENERS DOS BOTÕES
+            // BOTÕES
             // ============================================
             document.getElementById('btn-login').addEventListener('click', function(e) {
                 e.preventDefault();
@@ -208,7 +218,7 @@
                 }
             });
             
-            // Enter nos campos
+            // Enter
             document.getElementById('senha').addEventListener('keydown', function(e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();

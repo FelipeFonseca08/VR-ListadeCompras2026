@@ -15,7 +15,6 @@ window.validarRequisitos = function() {
     const senha = novaSenha.value
     const confirmacao = confirmarSenha.value
     
-    // Pelo menos 6 caracteres
     if (senha.length >= 6) {
         reqLength.classList.add('valid')
         reqLength.classList.remove('invalid')
@@ -29,7 +28,6 @@ window.validarRequisitos = function() {
         reqLength.querySelector('.req-icon').setAttribute('data-feather', 'circle')
     }
     
-    // Senhas iguais
     if (confirmacao.length > 0 && senha === confirmacao) {
         reqMatch.classList.add('valid')
         reqMatch.classList.remove('invalid')
@@ -47,14 +45,12 @@ window.validarRequisitos = function() {
 }
 
 // ============================================
-// TRADUZIR MENSAGENS DE ERRO DO SUPABASE
+// TRADUZIR MENSAGENS DE ERRO
 // ============================================
 
 function traduzirErro(mensagem) {
-    // Converte para minúsculas para facilitar a verificação
     var msg = mensagem.toLowerCase()
     
-    // Senha igual à anterior
     if (msg.includes('new password') && msg.includes('different') && msg.includes('old password')) {
         return 'A nova senha deve ser diferente da senha atual.'
     }
@@ -64,31 +60,19 @@ function traduzirErro(mensagem) {
     if (msg.includes('password') && msg.includes('different')) {
         return 'A nova senha deve ser diferente da senha atual.'
     }
-    
-    // Senha muito curta
     if (msg.includes('password') && msg.includes('at least 6 characters')) {
         return 'A senha deve ter pelo menos 6 caracteres.'
     }
-    if (msg.includes('password') && msg.includes('minimum')) {
-        return 'A senha deve ter pelo menos 6 caracteres.'
-    }
-    
-    // Senha muito comum/fácil
     if (msg.includes('password') && msg.includes('common')) {
         return 'Essa senha é muito comum. Escolha uma senha mais segura.'
     }
-    
-    // Token expirado
     if (msg.includes('token') && msg.includes('expired')) {
         return 'Link expirado. Solicite uma nova recuperação de senha.'
     }
-    
-    // Usuário não encontrado
     if (msg.includes('user') && msg.includes('not found')) {
         return 'Usuário não encontrado.'
     }
     
-    // Se não encontrou tradução, retorna a mensagem original
     return mensagem
 }
 
@@ -111,7 +95,6 @@ window.atualizarSenha = async function() {
     const senha = novaSenha.value
     const confirmacao = confirmarSenha.value
     
-    // Validações
     if (!senha || !confirmacao) {
         mensagemEl.innerHTML = '<div class="message error"><i data-feather="alert-circle"></i><span>Preencha todos os campos</span></div>'
         if (typeof feather !== 'undefined') feather.replace()
@@ -149,28 +132,21 @@ window.atualizarSenha = async function() {
         return
     }
     
-    // Loading
     botao.classList.add('loading')
     botao.disabled = true
     
     try {
-        console.log('Enviando nova senha...')
-        
         const { error } = await supabase.auth.updateUser({ password: senha })
         
         if (error) {
-            console.log('Erro original do Supabase:', error.message)
-            
-            // Traduz a mensagem de erro
             var mensagemErro = traduzirErro(error.message)
-            console.log('Mensagem traduzida:', mensagemErro)
             
             mensagemEl.innerHTML = '<div class="message error"><i data-feather="alert-triangle"></i><span>' + mensagemErro + '</span></div>'
             if (typeof feather !== 'undefined') feather.replace()
             
             novaSenha.classList.add('input-error')
             novaSenha.focus()
-            novaSenha.select() // Seleciona o texto para o usuário digitar uma nova
+            novaSenha.select()
             
             setTimeout(function() {
                 novaSenha.classList.remove('input-error')
@@ -179,9 +155,6 @@ window.atualizarSenha = async function() {
             botao.classList.remove('loading')
             botao.disabled = false
         } else {
-            console.log('Senha atualizada com sucesso!')
-            
-            // Sucesso
             mensagemEl.innerHTML = '<div class="message success"><i data-feather="check-circle"></i><span>Senha atualizada com sucesso!</span></div>'
             if (typeof feather !== 'undefined') feather.replace()
             
@@ -204,7 +177,6 @@ window.atualizarSenha = async function() {
             }, 2000)
         }
     } catch (err) {
-        console.log('Erro inesperado:', err)
         mensagemEl.innerHTML = '<div class="message error"><i data-feather="alert-triangle"></i><span>Erro ao atualizar. Tente novamente.</span></div>'
         if (typeof feather !== 'undefined') feather.replace()
         botao.classList.remove('loading')
@@ -213,7 +185,7 @@ window.atualizarSenha = async function() {
 }
 
 // ============================================
-// INICIALIZAÇÃO - VERIFICA TOKEN
+// INICIALIZAÇÃO
 // ============================================
 
 function init() {
