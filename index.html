@@ -17,31 +17,116 @@
         <input type="text" id="item" placeholder="Novo item">
         <button onclick="adicionarItem()">Adicionar</button>
         <button onclick="logout()">Sair da Lista</button>
+        <button onclick="atualizarApp()" style="margin-top: 12px; padding: 10px 18px; background: #034078; color: white; border: none; border-radius: 12px; cursor: pointer; font-family: 'Playpen Sans Arabic', cursive;">
+            🔄 Verificar Atualizações
+        </button>
     </div>
 
     <script type="module" src="app.js"></script>
 
     <script>
+        // ============================================
+        // FUNÇÃO PARA ATUALIZAR O APP MANUALMENTE
+        // ============================================
+        function atualizarApp() {
+            if (confirm('Deseja verificar se há atualizações disponíveis?')) {
+                if ('serviceWorker' in navigator) {
+                    // Remove todos os caches antigos
+                    caches.keys().then(function(cacheNames) {
+                        cacheNames.forEach(function(cacheName) {
+                            caches.delete(cacheName);
+                        });
+                    });
+                    
+                    // Remove todos os Service Workers antigos
+                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                        for(var i = 0; i < registrations.length; i++) {
+                            registrations[i].unregister();
+                        }
+                    }).then(function() {
+                        alert('Cache limpo! O app será recarregado com a versão mais recente.');
+                        setTimeout(function() {
+                            window.location.reload(true);
+                        }, 500);
+                    });
+                }
+            }
+        }
+
+        // ============================================
+        // REGISTRO DO SERVICE WORKER COM ATUALIZAÇÃO
+        // ============================================
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/service-worker.js')
                     .then(function(registration) {
-                        console.log('ServiceWorker registrado com sucesso:', registration.scope);
+                        console.log('ServiceWorker registrado:', registration.scope);
                         
-                        // Verifica se há atualização disponível
+                        // Verifica se há um novo Service Worker esperando
+                        if (registration.waiting) {
+                            notificarAtualizacao(registration);
+                        }
+                        
+                        // Escuta por novos Service Workers
                         registration.addEventListener('updatefound', function() {
                             var newWorker = registration.installing;
+                            
                             newWorker.addEventListener('statechange', function() {
                                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    console.log('Nova versão disponível! Recarregue a página.');
+                                    // Nova versão disponível!
+                                    console.log('🆕 Nova versão disponível!');
+                                    notificarAtualizacao(registration);
                                 }
                             });
                         });
                     })
                     .catch(function(error) {
-                        console.error('Falha ao registrar o ServiceWorker:', error);
+                        console.error('ServiceWorker erro:', error);
                     });
+                
+                // Escuta mensagens do Service Worker
+                navigator.serviceWorker.addEventListener('message', function(event) {
+                    if (event.data && event.data.type === 'SW_UPDATED') {
+                        console.log('✅', event.data.message);
+                    }
+                });
+                
+                // Verifica atualizações periodicamente (a cada 30 minutos)
+                setInterval(function() {
+                    navigator.serviceWorker.getRegistration().then(function(registration) {
+                        if (registration) {
+                            registration.update();
+                        }
+                    });
+                }, 30 * 60 * 1000);
             });
+        }
+        
+        // ============================================
+        // NOTIFICAR USUÁRIO SOBRE ATUALIZAÇÃO
+        // ============================================
+        function notificarAtualizacao(registration) {
+            var toast = document.createElement('div');
+            toast.style.cssText = 'position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #001F54; color: white; padding: 16px 24px; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); z-index: 9999; font-family: "Playpen Sans Arabic", cursive; text-align: center; animation: slideUp 0.3s ease; max-width: 90%;';
+            toast.innerHTML = '<p style="margin-bottom: 12px;">🆕 Nova versão disponível!</p><button id="btnAtualizar" style="background: #1282A2; color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-family: "Playpen Sans Arabic", cursive; margin-right: 8px;">Atualizar Agora</button><button id="btnDepois" style="background: transparent; color: white; border: 1px solid white; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-family: "Playpen Sans Arabic", cursive;">Depois</button>';
+            
+            document.body.appendChild(toast);
+            
+            document.getElementById('btnAtualizar').addEventListener('click', function() {
+                if (registration.waiting) {
+                    registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                }
+                window.location.reload();
+            });
+            
+            document.getElementById('btnDepois').addEventListener('click', function() {
+                document.body.removeChild(toast);
+            });
+            
+            // Adiciona animação
+            var style = document.createElement('style');
+            style.textContent = '@keyframes slideUp { from { opacity: 0; transform: translateX(-50%) translateY(20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }';
+            document.head.appendChild(style);
         }
     </script>
 </body>

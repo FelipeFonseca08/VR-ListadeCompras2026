@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Login • Cesta Livre</title>
-    
+
     <link rel="stylesheet" href="src/css/login.css">
     <link rel="manifest" href="manifest.json">
     <link rel="shortcut icon" href="src/icons/favicon.ico">
-    
+
     <script src="https://unpkg.com/feather-icons"></script>
 </head>
 
 <body>
     <div class="login-wrapper">
         <div class="login-card" id="loginCard">
-            
+
             <div class="login-header">
                 <div class="logo-wrapper">
                     <img id="logo" src="src/icons/icon-512x512.png" alt="Cesta Livre">
@@ -25,18 +26,11 @@
             </div>
 
             <form class="login-form" id="loginForm" onsubmit="return false;">
-                
+
                 <div class="form-group">
                     <div class="input-wrapper">
                         <i data-feather="mail" class="input-icon"></i>
-                        <input 
-                            type="email" 
-                            id="email" 
-                            class="form-input" 
-                            placeholder=" " 
-                            autocomplete="email"
-                            required
-                        >
+                        <input type="email" id="email" class="form-input" placeholder=" " autocomplete="email" required>
                         <label for="email" class="form-label">E-mail</label>
                     </div>
                 </div>
@@ -44,14 +38,8 @@
                 <div class="form-group">
                     <div class="input-wrapper">
                         <i data-feather="lock" class="input-icon"></i>
-                        <input 
-                            type="password" 
-                            id="senha" 
-                            class="form-input" 
-                            placeholder=" " 
-                            autocomplete="current-password"
-                            required
-                        >
+                        <input type="password" id="senha" class="form-input" placeholder=" "
+                            autocomplete="current-password" required>
                         <label for="senha" class="form-label">Senha</label>
                     </div>
                 </div>
@@ -93,7 +81,7 @@
                 </p>
             </div>
         </div>
-        
+
         <div class="background-decoration">
             <div class="circle circle-1"></div>
             <div class="circle circle-2"></div>
@@ -109,25 +97,19 @@
                 <h2 class="modal-title">Recuperar Senha</h2>
                 <p class="modal-subtitle">Enviaremos um link de redefinição para seu e-mail</p>
             </div>
-            
+
             <div class="modal-body">
                 <div class="form-group">
                     <div class="input-wrapper">
                         <i data-feather="mail" class="input-icon"></i>
-                        <input 
-                            type="email" 
-                            id="recoveryEmail" 
-                            class="form-input" 
-                            placeholder=" " 
-                            autocomplete="email"
-                            required
-                        >
+                        <input type="email" id="recoveryEmail" class="form-input" placeholder=" " autocomplete="email"
+                            required>
                         <label for="recoveryEmail" class="form-label">Seu e-mail</label>
                     </div>
                 </div>
-                
+
                 <div id="recoveryMensagem" class="message-container"></div>
-                
+
                 <button class="btn-login" id="btnRecovery" type="button">
                     <span class="btn-content">
                         <i data-feather="send" class="btn-icon"></i>
@@ -135,7 +117,7 @@
                     </span>
                     <span class="btn-loader"></span>
                 </button>
-                
+
                 <button type="button" class="btn-back mt-2" id="btnCloseModal">
                     <span class="btn-content">
                         <i data-feather="x" class="btn-icon"></i>
@@ -149,54 +131,54 @@
     <script type="module" src="auth.js"></script>
     <script>
         feather.replace();
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('btn-login').addEventListener('click', function(e) {
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('btn-login').addEventListener('click', function (e) {
                 e.preventDefault();
                 if (typeof window.login === 'function') window.login();
             });
-            
-            document.getElementById('btnSignup').addEventListener('click', function(e) {
+
+            document.getElementById('btnSignup').addEventListener('click', function (e) {
                 e.preventDefault();
                 if (typeof window.cadastro === 'function') window.cadastro();
             });
-            
-            document.getElementById('forgotLink').addEventListener('click', function(e) {
+
+            document.getElementById('forgotLink').addEventListener('click', function (e) {
                 e.preventDefault();
                 if (typeof window.abrirRecuperacao === 'function') window.abrirRecuperacao();
             });
-            
-            document.getElementById('btnRecovery').addEventListener('click', function(e) {
+
+            document.getElementById('btnRecovery').addEventListener('click', function (e) {
                 e.preventDefault();
                 if (typeof window.enviarRecuperacao === 'function') window.enviarRecuperacao();
             });
-            
-            document.getElementById('btnCloseModal').addEventListener('click', function(e) {
+
+            document.getElementById('btnCloseModal').addEventListener('click', function (e) {
                 e.preventDefault();
                 if (typeof window.fecharRecuperacao === 'function') window.fecharRecuperacao();
             });
-            
-            document.getElementById('modalOverlay').addEventListener('click', function(e) {
+
+            document.getElementById('modalOverlay').addEventListener('click', function (e) {
                 if (e.target === this) {
                     if (typeof window.fecharRecuperacao === 'function') window.fecharRecuperacao();
                 }
             });
-            
-            document.getElementById('senha').addEventListener('keydown', function(e) {
+
+            document.getElementById('senha').addEventListener('keydown', function (e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     if (typeof window.login === 'function') window.login();
                 }
             });
-            
-            document.getElementById('email').addEventListener('keydown', function(e) {
+
+            document.getElementById('email').addEventListener('keydown', function (e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     if (typeof window.login === 'function') window.login();
                 }
             });
-            
-            document.getElementById('recoveryEmail').addEventListener('keydown', function(e) {
+
+            document.getElementById('recoveryEmail').addEventListener('keydown', function (e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     if (typeof window.enviarRecuperacao === 'function') window.enviarRecuperacao();
@@ -206,16 +188,51 @@
 
         // Registra o Service Worker
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
+            window.addEventListener('load', function () {
                 navigator.serviceWorker.register('/service-worker.js')
-                    .then(function(registration) {
+                    .then(function (registration) {
                         console.log('ServiceWorker registrado:', registration.scope);
                     })
-                    .catch(function(error) {
+                    .catch(function (error) {
+                        console.error('ServiceWorker erro:', error);
+                    });
+            });
+        }
+    </script>
+
+    <script>
+        // ============================================
+        // REGISTRO DO SERVICE WORKER COM ATUALIZAÇÃO
+        // ============================================
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(function (registration) {
+                        console.log('ServiceWorker registrado:', registration.scope);
+
+                        if (registration.waiting) {
+                            registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                        }
+
+                        registration.addEventListener('updatefound', function () {
+                            var newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', function () {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    console.log('🆕 Nova versão disponível! Atualizando...');
+                                    newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                    setTimeout(function () {
+                                        window.location.reload();
+                                    }, 500);
+                                }
+                            });
+                        });
+                    })
+                    .catch(function (error) {
                         console.error('ServiceWorker erro:', error);
                     });
             });
         }
     </script>
 </body>
+
 </html>
