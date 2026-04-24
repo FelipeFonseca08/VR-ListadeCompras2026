@@ -33,7 +33,10 @@ body {
     overflow-x: hidden;
 }
 
-/* Wrapper Principal */
+/* ============================================ */
+/* WRAPPER E CARDS */
+/* ============================================ */
+
 .login-wrapper {
     width: 100%;
     max-width: 480px;
@@ -41,7 +44,6 @@ body {
     z-index: 2;
 }
 
-/* Cartão de Login */
 .login-card {
     background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(10px);
@@ -63,7 +65,6 @@ body {
         inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
-/* Animação de Entrada */
 @keyframes cardEntrance {
     from {
         opacity: 0;
@@ -75,7 +76,10 @@ body {
     }
 }
 
-/* Header */
+/* ============================================ */
+/* HEADER */
+/* ============================================ */
+
 .login-header {
     text-align: center;
     margin-bottom: 36px;
@@ -114,7 +118,10 @@ body {
     font-weight: 400;
 }
 
-/* Formulário */
+/* ============================================ */
+/* FORMULÁRIO */
+/* ============================================ */
+
 .login-form {
     display: flex;
     flex-direction: column;
@@ -123,6 +130,7 @@ body {
 
 .form-group {
     position: relative;
+    margin-bottom: 8px;
 }
 
 .input-wrapper {
@@ -138,47 +146,136 @@ body {
     height: 20px;
     color: var(--cor-primaria-2);
     opacity: 0.6;
-    transition: var(--transition);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 2;
     pointer-events: none;
 }
+
+/* ============================================ */
+/* INPUTS COM ANIMAÇÕES */
+/* ============================================ */
 
 .form-input {
     width: 100%;
     padding: 16px 16px 16px 48px;
     font-family: var(--fonte);
     font-size: 1rem;
-    color: #1e293b; /* COR DO TEXTO - AGORA VISÍVEL */
+    color: #1e293b;
     border: 2px solid #e2e8f0;
     border-radius: var(--raio-input);
     background: white;
-    transition: var(--transition);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     outline: none;
+    position: relative;
 }
 
-.form-input::placeholder {
-    color: transparent; /* Placeholder transparente para label flutuante funcionar */
+/* Hover no input */
+.form-input:hover {
+    border-color: #94a3b8;
+    background: #f8fafc;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 31, 84, 0.08);
 }
 
+/* Hover no ícone */
+.form-input:hover ~ .input-icon {
+    opacity: 0.8;
+    color: var(--cor-primaria-3);
+    transform: scale(1.1);
+}
+
+/* Hover na label quando input vazio */
+.form-input:hover ~ .form-label {
+    color: var(--cor-primaria-2);
+}
+
+/* Foco no input */
 .form-input:focus {
     border-color: var(--cor-primaria-3);
-    box-shadow: 0 0 0 4px rgba(18, 130, 162, 0.1);
-}
-
-.form-input:focus + .form-label,
-.form-input:not(:placeholder-shown) + .form-label {
-    transform: translateY(-24px) scale(0.85);
+    box-shadow: 
+        0 0 0 4px rgba(18, 130, 162, 0.1),
+        0 4px 12px rgba(0, 31, 84, 0.08);
     background: white;
-    padding: 0 8px;
-    color: var(--cor-primaria-3);
-    font-weight: 600;
-    left: 40px; /* Ajuste para alinhar com o texto */
+    transform: translateY(-2px);
 }
 
+/* Foco no ícone */
 .form-input:focus ~ .input-icon {
     opacity: 1;
     color: var(--cor-primaria-3);
+    transform: scale(1.15);
+    animation: iconPulse 0.3s ease;
 }
+
+@keyframes iconPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1.15); }
+}
+
+/* Hover no wrapper inteiro */
+.input-wrapper:hover .form-input:not(:focus) {
+    border-color: #94a3b8;
+    background: #f8fafc;
+}
+
+.input-wrapper:hover .input-icon:not(.form-input:focus ~ .input-icon) {
+    opacity: 0.8;
+    color: var(--cor-primaria-3);
+}
+
+/* Estado de erro */
+.form-input.input-error {
+    border-color: var(--cor-erro);
+    background: #fff5f5;
+    animation: errorPulse 0.5s ease;
+}
+
+.form-input.input-error:focus {
+    border-color: var(--cor-erro);
+    box-shadow: 
+        0 0 0 4px rgba(239, 68, 68, 0.1),
+        0 4px 12px rgba(0, 31, 84, 0.08);
+}
+
+@keyframes errorPulse {
+    0% { 
+        border-color: #e2e8f0;
+        background: white;
+    }
+    30% { 
+        border-color: var(--cor-erro);
+        background: #fff5f5;
+    }
+    60% { 
+        border-color: #fca5a5;
+        background: #fff5f5;
+    }
+    100% { 
+        border-color: var(--cor-erro);
+        background: #fff5f5;
+    }
+}
+
+/* Ícone de erro */
+.form-input.input-error ~ .input-icon {
+    color: var(--cor-erro);
+    opacity: 1;
+}
+
+.form-input.input-error ~ .form-label {
+    color: var(--cor-erro);
+}
+
+/* Placeholder */
+.form-input::placeholder {
+    color: transparent;
+    opacity: 1;
+}
+
+/* ============================================ */
+/* LABEL FLUTUANTE */
+/* ============================================ */
 
 .form-label {
     position: absolute;
@@ -186,19 +283,46 @@ body {
     top: 50%;
     transform: translateY(-50%);
     font-size: 1rem;
-    color: #64748b; /* COR DO LABEL - BEM VISÍVEL */
-    transition: var(--transition);
+    color: #64748b;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     pointer-events: none;
     background: transparent;
     z-index: 1;
 }
 
-/* Quando o input tem valor, o label fica em cima */
+/* Label sobe quando focado ou preenchido */
+.form-input:focus ~ .form-label,
+.form-input:not(:placeholder-shown) ~ .form-label {
+    top: 0;
+    transform: translateY(-50%) scale(0.85);
+    background: white;
+    padding: 0 8px;
+    left: 40px;
+    color: var(--cor-primaria-3);
+    font-weight: 600;
+}
+
+/* Label vermelha quando erro */
+.form-input.input-error:focus ~ .form-label,
+.form-input.input-error:not(:placeholder-shown) ~ .form-label {
+    color: var(--cor-erro);
+}
+
+/* Label durante hover no input vazio */
+.form-input:hover:not(:focus):not(:not(:placeholder-shown)) ~ .form-label {
+    color: var(--cor-primaria-2);
+    transform: translateY(-50%) scale(1.05);
+}
+
+/* Garantir cor do texto */
 .form-input:not(:placeholder-shown) {
     color: #1e293b;
 }
 
-/* Link Esqueci minha senha */
+/* ============================================ */
+/* LINK ESQUECI MINHA SENHA */
+/* ============================================ */
+
 .forgot-password {
     text-align: right;
     margin-top: -8px;
@@ -218,9 +342,13 @@ body {
     border-bottom-color: var(--cor-primaria-2);
 }
 
-/* Botões */
+/* ============================================ */
+/* BOTÕES */
+/* ============================================ */
+
 .btn-login,
-.btn-signup {
+.btn-signup,
+.btn-back {
     width: 100%;
     padding: 16px;
     font-family: var(--fonte);
@@ -238,6 +366,7 @@ body {
     background: linear-gradient(135deg, var(--cor-primaria-2), var(--cor-primaria-1));
     color: white;
     box-shadow: 0 4px 12px rgba(3, 64, 120, 0.3);
+    margin-top: 4px;
 }
 
 .btn-login:hover {
@@ -264,6 +393,22 @@ body {
     box-shadow: 0 4px 12px rgba(3, 64, 120, 0.2);
 }
 
+.btn-back {
+    background: transparent;
+    color: var(--cor-texto-secundario);
+    border: 2px solid #e2e8f0;
+    box-shadow: none;
+    padding: 14px;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.btn-back:hover {
+    border-color: #94a3b8;
+    background: #f8fafc;
+    color: #1e293b;
+}
+
 .btn-content {
     display: flex;
     align-items: center;
@@ -276,6 +421,7 @@ body {
     height: 20px;
 }
 
+/* Loader dos botões */
 .btn-loader {
     display: none;
     width: 24px;
@@ -305,12 +451,15 @@ body {
     to { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
-/* Divisor */
+/* ============================================ */
+/* DIVISOR */
+/* ============================================ */
+
 .divider-wrapper {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin: 8px 0;
+    margin: 4px 0;
 }
 
 .divider-line {
@@ -326,7 +475,10 @@ body {
     letter-spacing: 1px;
 }
 
-/* Mensagens */
+/* ============================================ */
+/* MENSAGENS DE FEEDBACK */
+/* ============================================ */
+
 .message-container {
     min-height: 40px;
     margin-top: 8px;
@@ -376,7 +528,170 @@ body {
     }
 }
 
-/* Footer */
+/* ============================================ */
+/* REQUISITOS DE SENHA (PÁGINA DE REDEFINIÇÃO) */
+/* ============================================ */
+
+.password-requirements {
+    background: #f8fafc;
+    border-radius: var(--raio-input);
+    padding: 16px;
+    margin-top: -4px;
+    border: 1px solid #e2e8f0;
+}
+
+.requirements-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--cor-texto-secundario);
+    margin-bottom: 12px;
+}
+
+.requirements-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.requirement-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85rem;
+    color: var(--cor-texto-secundario);
+    transition: all 0.3s ease;
+}
+
+.requirement-item .req-icon {
+    width: 16px;
+    height: 16px;
+    transition: all 0.3s ease;
+    color: #cbd5e1;
+}
+
+/* Requisito válido */
+.requirement-item.valid {
+    color: var(--cor-sucesso);
+}
+
+.requirement-item.valid .req-icon {
+    color: var(--cor-sucesso);
+    animation: checkPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Requisito inválido */
+.requirement-item.invalid {
+    color: var(--cor-erro);
+}
+
+.requirement-item.invalid .req-icon {
+    color: var(--cor-erro);
+    animation: shakeIcon 0.3s ease;
+}
+
+@keyframes checkPop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+@keyframes shakeIcon {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-2px); }
+    50% { transform: translateX(2px); }
+    75% { transform: translateX(-1px); }
+    100% { transform: translateX(0); }
+}
+
+/* ============================================ */
+/* MODAL DE RECUPERAÇÃO DE SENHA */
+/* ============================================ */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+}
+
+.modal-card {
+    background: white;
+    border-radius: 24px;
+    padding: 32px;
+    width: 90%;
+    max-width: 440px;
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.2),
+        0 10px 20px rgba(0, 0, 0, 0.1);
+    animation: modalSlideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+@keyframes modalSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.modal-icon {
+    width: 48px;
+    height: 48px;
+    color: var(--cor-primaria-2);
+    margin-bottom: 12px;
+    animation: float 3s ease-in-out infinite;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 8px;
+}
+
+.modal-subtitle {
+    font-size: 0.95rem;
+    color: var(--cor-texto-secundario);
+    line-height: 1.5;
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.mt-2 {
+    margin-top: 8px;
+}
+
+/* ============================================ */
+/* FOOTER */
+/* ============================================ */
+
 .login-footer {
     margin-top: 28px;
     text-align: center;
@@ -397,7 +712,10 @@ body {
     opacity: 0.7;
 }
 
-/* Background Decorativo */
+/* ============================================ */
+/* BACKGROUND DECORATIVO */
+/* ============================================ */
+
 .background-decoration {
     position: fixed;
     top: 0;
@@ -444,18 +762,10 @@ body {
     66% { transform: translate(-20px, 20px) scale(0.95); }
 }
 
-/* Animação de Shake para Erros */
-.shake {
-    animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-}
+/* ============================================ */
+/* RESPONSIVIDADE */
+/* ============================================ */
 
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
-    20%, 40%, 60%, 80% { transform: translateX(4px); }
-}
-
-/* Responsividade */
 @media (max-width: 480px) {
     body {
         padding: 16px;
@@ -474,11 +784,28 @@ body {
     }
     
     .form-input {
-        font-size: 16px; /* Evita zoom em mobile */
+        font-size: 16px;
+    }
+    
+    .modal-card {
+        padding: 24px;
+        margin: 16px;
+        width: calc(100% - 32px);
+    }
+    
+    .modal-title {
+        font-size: 1.3rem;
+    }
+    
+    .password-requirements {
+        padding: 12px;
     }
 }
 
-/* Acessibilidade */
+/* ============================================ */
+/* ACESSIBILIDADE */
+/* ============================================ */
+
 @media (prefers-reduced-motion: reduce) {
     * {
         animation-duration: 0.01ms !important;
@@ -487,7 +814,10 @@ body {
     }
 }
 
-/* Correção específica para autofill do navegador */
+/* ============================================ */
+/* CORREÇÕES PARA AUTOFILL */
+/* ============================================ */
+
 .form-input:-webkit-autofill,
 .form-input:-webkit-autofill:hover,
 .form-input:-webkit-autofill:focus,
@@ -495,4 +825,17 @@ body {
     -webkit-box-shadow: 0 0 0 30px white inset !important;
     -webkit-text-fill-color: #1e293b !important;
     transition: background-color 5000s ease-in-out 0s;
+}
+
+.form-input:-webkit-autofill ~ .form-label,
+.form-input:-webkit-autofill:hover ~ .form-label,
+.form-input:-webkit-autofill:focus ~ .form-label,
+.form-input:-webkit-autofill:active ~ .form-label {
+    top: 0;
+    transform: translateY(-50%) scale(0.85);
+    background: white;
+    padding: 0 8px;
+    left: 40px;
+    color: var(--cor-primaria-3);
+    font-weight: 600;
 }

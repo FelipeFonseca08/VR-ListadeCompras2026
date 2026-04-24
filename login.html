@@ -26,7 +26,7 @@
                 <p class="app-subtitle">Sua lista de compras compartilhada</p>
             </div>
 
-            <!-- Formulário -->
+            <!-- Formulário de Login -->
             <form class="login-form" id="loginForm" onsubmit="return false;">
                 
                 <div class="form-group">
@@ -44,7 +44,7 @@
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" id="senhaGroup">
                     <div class="input-wrapper">
                         <i data-feather="lock" class="input-icon"></i>
                         <input 
@@ -60,12 +60,12 @@
                 </div>
 
                 <!-- Link Esqueci minha senha -->
-                <div class="forgot-password">
-                    <a href="#" class="forgot-link" onclick="esqueciSenha(); return false;">Esqueci minha senha?</a>
+                <div class="forgot-password" id="forgotPassword">
+                    <a href="#" class="forgot-link" id="forgotLink">Esqueci minha senha?</a>
                 </div>
 
                 <!-- Botão de Login -->
-                <button id="btn-login" class="btn-login" onclick="login()">
+                <button id="btn-login" class="btn-login" type="button">
                     <span class="btn-content">
                         <i data-feather="log-in" class="btn-icon"></i>
                         <span class="btn-text">Entrar</span>
@@ -77,14 +77,14 @@
                 <div id="mensagem" class="message-container"></div>
 
                 <!-- Divisor -->
-                <div class="divider-wrapper">
+                <div class="divider-wrapper" id="dividerWrapper">
                     <span class="divider-line"></span>
                     <span class="divider-text">ou</span>
                     <span class="divider-line"></span>
                 </div>
 
                 <!-- Botão Criar Conta -->
-                <button type="button" class="btn-signup" onclick="cadastro()">
+                <button type="button" class="btn-signup" id="btnSignup">
                     <span class="btn-content">
                         <i data-feather="user-plus" class="btn-icon"></i>
                         <span class="btn-text">Criar conta gratuita</span>
@@ -111,25 +111,117 @@
         </div>
     </div>
 
+    <!-- Modal de Recuperação de Senha -->
+    <div class="modal-overlay" id="modalOverlay" style="display: none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <i data-feather="key" class="modal-icon"></i>
+                <h2 class="modal-title">Recuperar Senha</h2>
+                <p class="modal-subtitle">Enviaremos um link de redefinição para seu e-mail</p>
+            </div>
+            
+            <div class="modal-body">
+                <div class="form-group">
+                    <div class="input-wrapper">
+                        <i data-feather="mail" class="input-icon"></i>
+                        <input 
+                            type="email" 
+                            id="recoveryEmail" 
+                            class="form-input" 
+                            placeholder=" " 
+                            autocomplete="email"
+                            required
+                        >
+                        <label for="recoveryEmail" class="form-label">Seu e-mail</label>
+                    </div>
+                </div>
+                
+                <div id="recoveryMensagem" class="message-container"></div>
+                
+                <button class="btn-login" id="btnRecovery" type="button">
+                    <span class="btn-content">
+                        <i data-feather="send" class="btn-icon"></i>
+                        <span class="btn-text">Enviar link de recuperação</span>
+                    </span>
+                    <span class="btn-loader"></span>
+                </button>
+                
+                <button type="button" class="btn-back mt-2" id="btnCloseModal">
+                    <span class="btn-content">
+                        <i data-feather="x" class="btn-icon"></i>
+                        <span class="btn-text">Cancelar</span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script type="module" src="auth.js"></script>
     <script>
         // Inicializa os ícones Feather
         feather.replace();
         
-        // Função placeholder para "Esqueci minha senha"
-        window.esqueciSenha = function() {
-            const msgEl = document.getElementById('mensagem');
-            msgEl.innerHTML = `
-                <div class="message info">
-                    <i data-feather="info"></i>
-                    <span>Em breve! Use a recuperação de senha do app.</span>
-                </div>
-            `;
-            feather.replace();
-            setTimeout(() => {
-                msgEl.innerHTML = '';
-            }, 4000);
-        }
+        // Aguarda o DOM carregar para adicionar os event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Botão de login
+            document.getElementById('btn-login').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (typeof window.login === 'function') {
+                    window.login();
+                }
+            });
+            
+            // Botão de cadastro
+            document.getElementById('btnSignup').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (typeof window.cadastro === 'function') {
+                    window.cadastro();
+                }
+            });
+            
+            // Link "Esqueci minha senha"
+            document.getElementById('forgotLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (typeof window.abrirRecuperacao === 'function') {
+                    window.abrirRecuperacao();
+                }
+            });
+            
+            // Botão enviar recuperação
+            document.getElementById('btnRecovery').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (typeof window.enviarRecuperacao === 'function') {
+                    window.enviarRecuperacao();
+                }
+            });
+            
+            // Botão fechar modal
+            document.getElementById('btnCloseModal').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (typeof window.fecharRecuperacao === 'function') {
+                    window.fecharRecuperacao();
+                }
+            });
+            
+            // Fechar modal ao clicar fora
+            document.getElementById('modalOverlay').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    if (typeof window.fecharRecuperacao === 'function') {
+                        window.fecharRecuperacao();
+                    }
+                }
+            });
+            
+            // Enter para submeter no modal de recuperação
+            document.getElementById('recoveryEmail').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (typeof window.enviarRecuperacao === 'function') {
+                        window.enviarRecuperacao();
+                    }
+                }
+            });
+        });
     </script>
 </body>
 </html>
