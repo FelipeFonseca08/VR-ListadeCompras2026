@@ -17,42 +17,11 @@
         <input type="text" id="item" placeholder="Novo item">
         <button onclick="adicionarItem()">Adicionar</button>
         <button onclick="logout()">Sair da Lista</button>
-        <button onclick="atualizarApp()" style="margin-top: 12px; padding: 10px 18px; background: #034078; color: white; border: none; border-radius: 12px; cursor: pointer; font-family: 'Playpen Sans Arabic', cursive;">
-            🔄 Verificar Atualizações
-        </button>
     </div>
 
     <script type="module" src="app.js"></script>
 
     <script>
-        // ============================================
-        // FUNÇÃO PARA ATUALIZAR O APP MANUALMENTE
-        // ============================================
-        function atualizarApp() {
-            if (confirm('Deseja verificar se há atualizações disponíveis?')) {
-                if ('serviceWorker' in navigator) {
-                    // Remove todos os caches antigos
-                    caches.keys().then(function(cacheNames) {
-                        cacheNames.forEach(function(cacheName) {
-                            caches.delete(cacheName);
-                        });
-                    });
-                    
-                    // Remove todos os Service Workers antigos
-                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                        for(var i = 0; i < registrations.length; i++) {
-                            registrations[i].unregister();
-                        }
-                    }).then(function() {
-                        alert('Cache limpo! O app será recarregado com a versão mais recente.');
-                        setTimeout(function() {
-                            window.location.reload(true);
-                        }, 500);
-                    });
-                }
-            }
-        }
-
         // ============================================
         // REGISTRO DO SERVICE WORKER COM ATUALIZAÇÃO
         // ============================================
@@ -64,7 +33,7 @@
                         
                         // Verifica se há um novo Service Worker esperando
                         if (registration.waiting) {
-                            notificarAtualizacao(registration);
+                            mostrarToastAtualizacao(registration);
                         }
                         
                         // Escuta por novos Service Workers
@@ -73,9 +42,8 @@
                             
                             newWorker.addEventListener('statechange', function() {
                                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    // Nova versão disponível!
-                                    console.log('🆕 Nova versão disponível!');
-                                    notificarAtualizacao(registration);
+                                    console.log('Nova versão disponível!');
+                                    mostrarToastAtualizacao(registration);
                                 }
                             });
                         });
@@ -87,7 +55,7 @@
                 // Escuta mensagens do Service Worker
                 navigator.serviceWorker.addEventListener('message', function(event) {
                     if (event.data && event.data.type === 'SW_UPDATED') {
-                        console.log('✅', event.data.message);
+                        console.log('Service Worker atualizado');
                     }
                 });
                 
@@ -103,30 +71,66 @@
         }
         
         // ============================================
-        // NOTIFICAR USUÁRIO SOBRE ATUALIZAÇÃO
+        // TOAST DE ATUALIZAÇÃO PROFISSIONAL
         // ============================================
-        function notificarAtualizacao(registration) {
+        function mostrarToastAtualizacao(registration) {
+            // Remove toast anterior se existir
+            var toastAntigo = document.getElementById('updateToast');
+            if (toastAntigo) {
+                document.body.removeChild(toastAntigo);
+            }
+            
+            // Cria o toast
             var toast = document.createElement('div');
-            toast.style.cssText = 'position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #001F54; color: white; padding: 16px 24px; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); z-index: 9999; font-family: "Playpen Sans Arabic", cursive; text-align: center; animation: slideUp 0.3s ease; max-width: 90%;';
-            toast.innerHTML = '<p style="margin-bottom: 12px;">🆕 Nova versão disponível!</p><button id="btnAtualizar" style="background: #1282A2; color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-family: "Playpen Sans Arabic", cursive; margin-right: 8px;">Atualizar Agora</button><button id="btnDepois" style="background: transparent; color: white; border: 1px solid white; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-family: "Playpen Sans Arabic", cursive;">Depois</button>';
+            toast.id = 'updateToast';
+            toast.style.cssText = 'position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: white; border-radius: 20px; padding: 0; box-shadow: 0 12px 40px rgba(0, 31, 84, 0.25); z-index: 9999; font-family: "Playpen Sans Arabic", cursive; max-width: 90%; width: 400px; animation: toastEntrada 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); overflow: hidden; border: 1px solid rgba(18, 130, 162, 0.2);';
+            
+            toast.innerHTML = '<div style="background: linear-gradient(135deg, #001F54, #034078); padding: 4px 0;"><div style="background: rgba(255,255,255,0.2); height: 3px; border-radius: 0 0 2px 2px;"></div></div><div style="padding: 24px 20px;"><div style="display: flex; align-items: flex-start; gap: 14px;"><div style="background: linear-gradient(135deg, #1282A2, #034078); border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 12px rgba(18, 130, 162, 0.3);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg></div><div style="flex: 1;"><h3 style="margin: 0 0 4px 0; font-size: 1rem; font-weight: 700; color: #1e293b;">Atualização disponível!</h3><p style="margin: 0; font-size: 0.85rem; color: #64748b; line-height: 1.5;">Uma nova versão do app está pronta. Atualize para não perder as novidades.</p></div></div><div style="display: flex; gap: 10px; margin-top: 18px;"><button id="btnAtualizarAgora" style="flex: 1; padding: 12px 16px; background: linear-gradient(135deg, #034078, #001F54); color: white; border: none; border-radius: 12px; cursor: pointer; font-family: \'Playpen Sans Arabic\', cursive; font-size: 0.9rem; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(3, 64, 120, 0.3);">Atualizar agora</button><button id="btnDepoisAgora" style="padding: 12px 16px; background: transparent; color: #64748b; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; font-family: \'Playpen Sans Arabic\', cursive; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;">Depois</button></div></div>';
             
             document.body.appendChild(toast);
             
-            document.getElementById('btnAtualizar').addEventListener('click', function() {
+            // Hover effects
+            var btnAtualizar = document.getElementById('btnAtualizarAgora');
+            var btnDepois = document.getElementById('btnDepoisAgora');
+            
+            btnAtualizar.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+                this.style.boxShadow = '0 8px 20px rgba(3, 64, 120, 0.4)';
+            });
+            btnAtualizar.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 4px 12px rgba(3, 64, 120, 0.3)';
+            });
+            
+            btnDepois.addEventListener('mouseenter', function() {
+                this.style.borderColor = '#94a3b8';
+                this.style.color = '#1e293b';
+            });
+            btnDepois.addEventListener('mouseleave', function() {
+                this.style.borderColor = '#e2e8f0';
+                this.style.color = '#64748b';
+            });
+            
+            // Ações
+            btnAtualizar.addEventListener('click', function() {
                 if (registration.waiting) {
                     registration.waiting.postMessage({ type: 'SKIP_WAITING' });
                 }
+                document.body.removeChild(toast);
                 window.location.reload();
             });
             
-            document.getElementById('btnDepois').addEventListener('click', function() {
+            btnDepois.addEventListener('click', function() {
                 document.body.removeChild(toast);
             });
             
-            // Adiciona animação
-            var style = document.createElement('style');
-            style.textContent = '@keyframes slideUp { from { opacity: 0; transform: translateX(-50%) translateY(20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }';
-            document.head.appendChild(style);
+            // Adiciona animação CSS
+            if (!document.getElementById('toastStyles')) {
+                var style = document.createElement('style');
+                style.id = 'toastStyles';
+                style.textContent = '@keyframes toastEntrada { from { opacity: 0; transform: translateX(-50%) translateY(30px) scale(0.9); } to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); } }';
+                document.head.appendChild(style);
+            }
         }
     </script>
 </body>
