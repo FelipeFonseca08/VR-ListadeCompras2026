@@ -707,3 +707,69 @@ body {
     color: var(--cor-primaria-3);
     font-weight: 600;
 }
+
+/* ============================================ */
+/* BOTÃO MOSTRAR/OCULTAR SENHA */
+/* ============================================ */
+
+.input-wrapper {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    z-index: 3;
+    color: #94a3b8;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+}
+
+.toggle-password:hover {
+    color: var(--cor-primaria-3);
+    background: rgba(18, 130, 162, 0.1);
+}
+
+.toggle-password:active {
+    transform: translateY(-50%) scale(0.9);
+}
+
+.toggle-password .eye-icon {
+    width: 20px;
+    height: 20px;
+    pointer-events: none;
+}
+
+.toggle-password.show .eye-open {
+    display: block;
+}
+
+.toggle-password.show .eye-closed {
+    display: none;
+}
+
+.toggle-password:not(.show) .eye-open {
+    display: none;
+}
+
+.toggle-password:not(.show) .eye-closed {
+    display: block;
+}
+
+/* Ajuste do padding do input para não sobrepor o ícone do olho */
+.form-input[type="password"],
+.form-input[type="text"][id*="senha"],
+.form-input[type="text"][id*="Senha"] {
+    padding-right: 52px;
+}
