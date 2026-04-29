@@ -7,42 +7,143 @@
     <link rel="stylesheet" href="src/css/index.css">
     <link rel="manifest" href="manifest.json">
     <link rel="shortcut icon" href="src/icons/favicon.ico" type="image/x-icon">
+    <script src="https://unpkg.com/feather-icons"></script>
 </head>
 
 <body>
     <div class="container">
-        <img id="logo" src="src/icons/icon-512x512.png" alt="Cesta Livre">
-        <h1 class="titulo">Sua Lista de Compras</h1>
+        
+        <!-- HEADER COMPACTO -->
+        <div class="header-compacto">
+            <div class="header-left">
+                <img class="logo-mini" src="src/icons/icon-512x512.png" alt="Cesta Livre">
+                <div>
+                    <h1 class="titulo-header">Cesta Livre</h1>
+                    <p class="subtitulo-header">Lista de compras compartilhada</p>
+                </div>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <button class="btn-limpar" onclick="limparTudo()" title="Limpar lista">
+                    <i data-feather="trash-2" class="sair-icon"></i>
+                    Limpar
+                </button>
+                <button class="btn-sair" onclick="logout()">
+                    <i data-feather="log-out" class="sair-icon"></i>
+                    Sair
+                </button>
+            </div>
+        </div>
+
+        <!-- FILTRO DE CATEGORIAS -->
+        <div class="categorias-wrapper" id="categoriasWrapper">
+            <button class="categoria-btn active" data-categoria="todas">
+                🛒 Todas
+            </button>
+            <button class="categoria-btn" data-categoria="hortifruti">
+                🥦 Hortifruti
+            </button>
+            <button class="categoria-btn" data-categoria="laticinios">
+                🥛 Laticínios
+            </button>
+            <button class="categoria-btn" data-categoria="padaria">
+                🍞 Padaria
+            </button>
+            <button class="categoria-btn" data-categoria="carnes">
+                🥩 Carnes
+            </button>
+            <button class="categoria-btn" data-categoria="limpeza">
+                🧹 Limpeza
+            </button>
+            <button class="categoria-btn" data-categoria="higiene">
+                🧴 Higiene
+            </button>
+            <button class="categoria-btn" data-categoria="bebidas">
+                🥤 Bebidas
+            </button>
+            <button class="categoria-btn" data-categoria="outros">
+                📦 Outros
+            </button>
+        </div>
+
+        <!-- CONTADOR DE ITENS -->
+        <div class="contador">
+            <i data-feather="shopping-cart" class="contador-icon"></i>
+            <span id="textoContador">Nenhum item na lista</span>
+            <span class="contador-badge" id="badgeContador" style="display: none;">0</span>
+        </div>
+
+        <!-- LISTA -->
         <ul id="lista"></ul>
-        <input type="text" id="item" placeholder="Novo item">
-        <button onclick="adicionarItem()">Adicionar</button>
-        <button onclick="logout()">Sair da Lista</button>
+
+        <!-- INPUT E BOTÕES -->
+        <div class="input-group">
+            <div class="input-wrapper-index">
+                <i data-feather="plus-circle" class="input-icon-left"></i>
+                <input type="text" id="item" placeholder="O que você precisa comprar?">
+            </div>
+            <select id="categoriaSelect" class="categoria-select">
+                <option value="outros">📦 Outros</option>
+                <option value="hortifruti">🥦 Hortifruti</option>
+                <option value="laticinios">🥛 Laticínios</option>
+                <option value="padaria">🍞 Padaria</option>
+                <option value="carnes">🥩 Carnes</option>
+                <option value="limpeza">🧹 Limpeza</option>
+                <option value="higiene">🧴 Higiene</option>
+                <option value="bebidas">🥤 Bebidas</option>
+            </select>
+        </div>
+        
+        <div class="btn-group">
+            <button class="btn-adicionar" onclick="adicionarItem()">
+                <i data-feather="plus" class="btn-icon"></i>
+                Adicionar
+            </button>
+        </div>
+
+    </div>
+
+    <div class="background-decoration">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+        <div class="circle circle-3"></div>
     </div>
 
     <script type="module" src="app.js"></script>
-
     <script>
-        // ============================================
-        // REGISTRO DO SERVICE WORKER COM ATUALIZAÇÃO
-        // ============================================
+        feather.replace();
+
+        // Filtro de categorias
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.categoria-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.categoria-btn').forEach(function(b) {
+                        b.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    var categoria = this.getAttribute('data-categoria');
+                    if (typeof window.filtrarPorCategoria === 'function') {
+                        window.filtrarPorCategoria(categoria);
+                    }
+                });
+            });
+        });
+
+        // Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/service-worker.js')
                     .then(function(registration) {
                         console.log('ServiceWorker registrado:', registration.scope);
                         
-                        // Verifica se há um novo Service Worker esperando
                         if (registration.waiting) {
                             mostrarToastAtualizacao(registration);
                         }
                         
-                        // Escuta por novos Service Workers
                         registration.addEventListener('updatefound', function() {
                             var newWorker = registration.installing;
-                            
                             newWorker.addEventListener('statechange', function() {
                                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    console.log('Nova versão disponível!');
                                     mostrarToastAtualizacao(registration);
                                 }
                             });
@@ -52,14 +153,6 @@
                         console.error('ServiceWorker erro:', error);
                     });
                 
-                // Escuta mensagens do Service Worker
-                navigator.serviceWorker.addEventListener('message', function(event) {
-                    if (event.data && event.data.type === 'SW_UPDATED') {
-                        console.log('Service Worker atualizado');
-                    }
-                });
-                
-                // Verifica atualizações periodicamente (a cada 30 minutos)
                 setInterval(function() {
                     navigator.serviceWorker.getRegistration().then(function(registration) {
                         if (registration) {
@@ -70,61 +163,28 @@
             });
         }
         
-        // ============================================
-        // TOAST DE ATUALIZAÇÃO PROFISSIONAL
-        // ============================================
         function mostrarToastAtualizacao(registration) {
-            // Remove toast anterior se existir
             var toastAntigo = document.getElementById('updateToast');
-            if (toastAntigo) {
-                document.body.removeChild(toastAntigo);
-            }
+            if (toastAntigo) document.body.removeChild(toastAntigo);
             
-            // Cria o toast
             var toast = document.createElement('div');
             toast.id = 'updateToast';
             toast.style.cssText = 'position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: white; border-radius: 20px; padding: 0; box-shadow: 0 12px 40px rgba(0, 31, 84, 0.25); z-index: 9999; font-family: "Playpen Sans Arabic", cursive; max-width: 90%; width: 400px; animation: toastEntrada 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); overflow: hidden; border: 1px solid rgba(18, 130, 162, 0.2);';
             
-            toast.innerHTML = '<div style="background: linear-gradient(135deg, #001F54, #034078); padding: 4px 0;"><div style="background: rgba(255,255,255,0.2); height: 3px; border-radius: 0 0 2px 2px;"></div></div><div style="padding: 24px 20px;"><div style="display: flex; align-items: flex-start; gap: 14px;"><div style="background: linear-gradient(135deg, #1282A2, #034078); border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 12px rgba(18, 130, 162, 0.3);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg></div><div style="flex: 1;"><h3 style="margin: 0 0 4px 0; font-size: 1rem; font-weight: 700; color: #1e293b;">Atualização disponível!</h3><p style="margin: 0; font-size: 0.85rem; color: #64748b; line-height: 1.5;">Uma nova versão do app está pronta. Atualize para não perder as novidades.</p></div></div><div style="display: flex; gap: 10px; margin-top: 18px;"><button id="btnAtualizarAgora" style="flex: 1; padding: 12px 16px; background: linear-gradient(135deg, #034078, #001F54); color: white; border: none; border-radius: 12px; cursor: pointer; font-family: \'Playpen Sans Arabic\', cursive; font-size: 0.9rem; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(3, 64, 120, 0.3);">Atualizar agora</button><button id="btnDepoisAgora" style="padding: 12px 16px; background: transparent; color: #64748b; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; font-family: \'Playpen Sans Arabic\', cursive; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;">Depois</button></div></div>';
+            toast.innerHTML = '<div style="background: linear-gradient(135deg, #001F54, #034078); padding: 4px 0;"><div style="background: rgba(255,255,255,0.2); height: 3px; border-radius: 0 0 2px 2px;"></div></div><div style="padding: 24px 20px;"><div style="display: flex; align-items: flex-start; gap: 14px;"><div style="background: linear-gradient(135deg, #1282A2, #034078); border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 12px rgba(18, 130, 162, 0.3);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg></div><div style="flex: 1;"><h3 style="margin: 0 0 4px 0; font-size: 1rem; font-weight: 700; color: #1e293b;">Atualização disponível!</h3><p style="margin: 0; font-size: 0.85rem; color: #64748b; line-height: 1.5;">Uma nova versão do app está pronta.</p></div></div><div style="display: flex; gap: 10px; margin-top: 18px;"><button id="btnAtualizarAgora" style="flex: 1; padding: 12px 16px; background: linear-gradient(135deg, #034078, #001F54); color: white; border: none; border-radius: 12px; cursor: pointer; font-family: \'Playpen Sans Arabic\', cursive; font-size: 0.9rem; font-weight: 600; box-shadow: 0 4px 12px rgba(3, 64, 120, 0.3);">Atualizar agora</button><button id="btnDepoisAgora" style="padding: 12px 16px; background: transparent; color: #64748b; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; font-family: \'Playpen Sans Arabic\', cursive; font-size: 0.9rem; font-weight: 500;">Depois</button></div></div>';
             
             document.body.appendChild(toast);
             
-            // Hover effects
-            var btnAtualizar = document.getElementById('btnAtualizarAgora');
-            var btnDepois = document.getElementById('btnDepoisAgora');
-            
-            btnAtualizar.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-2px)';
-                this.style.boxShadow = '0 8px 20px rgba(3, 64, 120, 0.4)';
-            });
-            btnAtualizar.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0)';
-                this.style.boxShadow = '0 4px 12px rgba(3, 64, 120, 0.3)';
-            });
-            
-            btnDepois.addEventListener('mouseenter', function() {
-                this.style.borderColor = '#94a3b8';
-                this.style.color = '#1e293b';
-            });
-            btnDepois.addEventListener('mouseleave', function() {
-                this.style.borderColor = '#e2e8f0';
-                this.style.color = '#64748b';
-            });
-            
-            // Ações
-            btnAtualizar.addEventListener('click', function() {
-                if (registration.waiting) {
-                    registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-                }
+            document.getElementById('btnAtualizarAgora').addEventListener('click', function() {
+                if (registration.waiting) registration.waiting.postMessage({ type: 'SKIP_WAITING' });
                 document.body.removeChild(toast);
                 window.location.reload();
             });
             
-            btnDepois.addEventListener('click', function() {
+            document.getElementById('btnDepoisAgora').addEventListener('click', function() {
                 document.body.removeChild(toast);
             });
             
-            // Adiciona animação CSS
             if (!document.getElementById('toastStyles')) {
                 var style = document.createElement('style');
                 style.id = 'toastStyles';
